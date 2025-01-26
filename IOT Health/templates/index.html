@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Futuristic IoT Health Monitoring Dashboard</title>
+
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Use a futuristic font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha512-"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      /* GLOBAL RESET */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* BODY STYLING */
+      body {
+        font-family: 'Orbitron', sans-serif;
+        background: linear-gradient(to right, #2c3e50, #4ca1af);
+        color: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* HEADER / NAVBAR */
+      .navbar {
+        width: 100%;
+        max-width: 1200px;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .navbar h1 i {
+        color: #ffcb57;
+      }
+
+      .navbar nav {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .navbar nav a {
+        padding: 0.4rem 0.8rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(6px);
+        border-radius: 5px;
+        transition: background 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .navbar nav a i {
+        font-size: 0.9rem;
+      }
+
+      .navbar nav a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .navbar button {
+        background-color: #34495e;
+        color: #ecf0f1;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .navbar button:hover {
+        background-color: #2c3e50;
+      }
+
+      /* MAIN CONTAINER */
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      /* CARDS SECTION */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        position: relative;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 10px;
+        text-align: center;
+        padding: 1.5rem;
+        transition: transform 0.2s ease, background 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .card i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .card h2 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+      }
+
+      .card h3 {
+        font-size: 1.8rem;
+        margin: 0;
+        font-weight: 400;
+      }
+
+      /* CHARTS SECTION */
+      .charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .chart-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: background 0.2s ease;
+      }
+
+      .chart-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .chart-card h2 {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .chart-card h2 i {
+        font-size: 1.2rem;
+      }
+
+      .chart-full {
+        grid-column: span 2;
+      }
+
+      canvas {
+        width: 100% !important;
+        max-height: 300px;
+      }
+
+      /* TABLE SECTION */
+      .table-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: background 0.2s ease;
+      }
+
+      .table-section:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .table-section h2 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .table-section h2 i {
+        font-size: 1.2rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      th, td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.75rem;
+        text-align: left;
+      }
+
+      th {
+        text-transform: uppercase;
+        font-weight: 400;
+        font-size: 0.85rem;
+      }
+
+      tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      /* STATS SECTION */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .stat-card h4 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .stat-card h4 i {
+        font-size: 1.1rem;
+      }
+
+      .stat-card p {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      /* DARK MODE TOGGLE */
+      .dark-mode {
+        background: linear-gradient(to right, #1a1a1a, #3f3f3f);
+        color: #e0e0e0;
+      }
+
+      .dark-mode .card,
+      .dark-mode .chart-card,
+      .dark-mode .table-section,
+      .dark-mode .stat-card {
+        background: rgba(255, 255, 255, 0.15) !important;
+      }
+
+      /* BORDERS FOR ANOMALIES */
+      .warning {
+        border: 2px solid #e74c3c !important;
+        box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+      }
+
+      /* ANOMALY ROW STYLING */
+      .anomaly-row {
+        color: #e74c3c;
+        font-weight: 600;
+      }
+
+      .normal-row {
+        color: #ffffff;
+        font-weight: 400;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR / HEADER -->
+    <div class="navbar">
+      <h1><i class="fas fa-heartbeat"></i> IoT Health </h1>
+      <nav>
+        <a href="#metrics"><i class="fas fa-tachometer-alt"></i> Metrics</a>
+        <a href="#charts"><i class="fas fa-chart-line"></i> Charts</a>
+        <a href="#history"><i class="fas fa-table"></i> History</a>
+      </nav>
+      <button id="toggleDarkMode"><i class="fas fa-adjust"></i> </button>
+    </div>
+
+    <div class="container">
+      <!-- KEY METRICS CARDS -->
+      <div class="cards" id="metrics">
+        <div class="card" id="tempCard">
+          <i class="fas fa-thermometer-half"></i>
+          <h2>Température</h2>
+          <h3 id="temperatureValue">-- °C</h3>
+        </div>
+        <div class="card" id="hrCard">
+          <i class="fas fa-heart"></i>
+          <h2>Fréquence cardiaque</h2>
+          <h3 id="heartrateValue">-- BPM</h3>
+        </div>
+        <div class="card" id="spo2Card">
+          <i class="fas fa-lungs"></i>
+          <h2>SpO2</h2>
+          <h3 id="spo2Value">-- %</h3>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts" id="charts">
+        <div class="chart-card">
+          <h2><i class="fas fa-fire"></i> Température (°C)</h2>
+          <canvas id="temperatureChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2><i class="fas fa-heartbeat"></i> Fréquence cardiaque (BPM)</h2>
+          <canvas id="heartrateChart"></canvas>
+        </div>
+        <div class="chart-card chart-full">
+          <h2><i class="fas fa-lungs"></i> SpO2 (%)</h2>
+          <canvas id="spo2Chart"></canvas>
+        </div>
+        <div class="chart-card chart-full">
+          <h2><i class="fas fa-chart-area"></i> Comparative View</h2>
+          <canvas id="combinedChart"></canvas>
+        </div>
+      </div>
+
+      <!-- SESSION STATS -->
+      <div class="table-section">
+        <h2><i class="fas fa-chart-bar"></i> Session Analytics</h2>
+        <div class="stats" id="statsPanel">
+          <!-- We'll fill these dynamically with min, max, and average for each param -->
+          <div class="stat-card">
+            <h4><i class="fas fa-thermometer-half"></i> Température Moy (°C)</h4>
+            <p id="tempAvg">--</p>
+          </div>
+          <div class="stat-card">
+            <h4><i class="fas fa-thermometer-half"></i> Température Min (°C)</h4>
+            <p id="tempMin">--</p>
+          </div>
+          <div class="stat-card">
+            <h4><i class="fas fa-thermometer-half"></i> Température Max (°C)</h4>
+            <p id="tempMax">--</p>
+          </div>
+
+          <div class="stat-card">
+            <h4><i class="fas fa-heartbeat"></i> Freq Cardiaque Moy (BPM)</h4>
+            <p id="hrAvg">--</p>
+          </div>
+          <div class="stat-card">
+            <h4><i class="fas fa-heartbeat"></i> Freq Cardiaque Min (BPM)</h4>
+            <p id="hrMin">--</p>
+          </div>
+          <div class="stat-card">
+            <h4><i class="fas fa-heartbeat"></i> Freq Cardiaque Max (BPM)</h4>
+            <p id="hrMax">--</p>
+          </div>
+
+          <div class="stat-card">
+            <h4><i class="fas fa-lungs"></i> SpO2 Moy (%)</h4>
+            <p id="spo2Avg">--</p>
+          </div>
+          <div class="stat-card">
+            <h4><i class="fas fa-lungs"></i> SpO2 Min (%)</h4>
+            <p id="spo2Min">--</p>
+          </div>
+          <div class="stat-card">
+            <h4><i class="fas fa-lungs"></i> SpO2 Max (%)</h4>
+            <p id="spo2Max">--</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORICAL DATA -->
+      <div class="table-section" id="history">
+        <h2><i class="fas fa-history"></i> Données Historiques</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Temps</th>
+              <th>Température (°C)</th>
+              <th>Fréquence cardiaque (BPM)</th>
+              <th>SpO2 (%)</th>
+            </tr>
+          </thead>
+          <tbody id="dataTable"></tbody>
+        </table>
+      </div>
+
+      <!-- ANOMALIES -->
+      <div class="table-section">
+        <h2><i class="fas fa-exclamation-triangle"></i> Anomalies Détectées</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Temps</th>
+              <th>Paramètre</th>
+              <th>Valeur</th>
+              <th>Type d'Anomalie</th>
+            </tr>
+          </thead>
+          <tbody id="anomaliesTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="normalSound" src="static/audio/normal.mp3" loop></audio>
+    <audio id="anomalySound" src="static/audio/anomaly.mp3"></audio>
+
+    <script>
+      // Data Arrays
+      let temperatureData = [];
+      let heartrateData = [];
+      let spo2Data = [];
+      let combinedLabels = [];
+
+      // Chart Instances
+      let temperatureChart, heartrateChart, spo2Chart, combinedChart;
+
+      // Helper function to fetch data
+      async function fetchData(endpoint, dataKey, chart, dataset, soundIdNormal, soundIdAnomaly, valueElementId) {
+        try {
+          const response = await fetch(endpoint);
+          const data = await response.json();
+
+          const anomaly = data.anomaly; // expecting the same JSON structure
+          if (data[dataKey] !== undefined) {
+            const currentTime = new Date().toLocaleTimeString();
+
+            // push new data & maintain length
+            dataset.push(data[dataKey]);
+            if (dataset.length > 30) {
+              dataset.shift();
+              combinedLabels.shift();
+            }
+
+            combinedLabels.push(currentTime);
+
+            // update main chart
+            chart.data.labels = combinedLabels;
+            chart.data.datasets[0].data = dataset;
+            chart.update();
+
+            // update combined chart if relevant
+            updateCombinedChart();
+
+            // update card text
+            let suffix = "";
+            if (valueElementId === "temperatureValue") {
+              suffix = "°C";
+            } else if (valueElementId === "heartrateValue") {
+              suffix = " BPM";
+            } else {
+              suffix = "%";
+            }
+            document.getElementById(valueElementId).textContent = `${data[dataKey]} ${suffix}`;
+
+            // handle anomaly
+            if (anomaly && anomaly !== "Normal") {
+              playSound(soundIdAnomaly);
+              addAnomalyRow(currentTime, dataKey, data[dataKey], anomaly);
+            } else {
+              playSound(soundIdNormal);
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching ${dataKey}:`, error);
+        }
+      }
+
+      // Sound playing logic
+      function playSound(soundId) {
+        const sound = document.getElementById(soundId);
+        sound.pause();
+        sound.currentTime = 0;
+        sound.play();
+      }
+
+      // Table row insertion for historical data
+      function addTableRow(time, temperature, heartrate, spo2) {
+        const table = document.getElementById("dataTable");
+        const rows = table.querySelectorAll("tr");
+
+        const row = document.createElement("tr");
+        row.classList.add("normal-row");
+        row.innerHTML = `
+          <td>${time}</td>
+          <td>${temperature !== undefined ? temperature : "--"}</td>
+          <td>${heartrate !== undefined ? heartrate : "--"}</td>
+          <td>${spo2 !== undefined ? spo2 : "--"}</td>
+        `;
+        table.prepend(row);
+
+        // keep only 15 rows
+        if (rows.length >= 15) {
+          rows[rows.length - 1].remove();
+        }
+      }
+
+      // Table row insertion for anomalies
+      function addAnomalyRow(time, parameter, value, anomalyType) {
+        const anomaliesTable = document.getElementById("anomaliesTable");
+        const rows = anomaliesTable.querySelectorAll("tr");
+
+        const row = document.createElement("tr");
+        row.classList.add("anomaly-row");
+        row.innerHTML = `
+          <td>${time}</td>
+          <td>${parameter}</td>
+          <td>${value}</td>
+          <td>${anomalyType}</td>
+        `;
+        anomaliesTable.prepend(row);
+
+        // keep only 10 anomaly rows
+        if (rows.length >= 10) {
+          rows[rows.length - 1].remove();
+        }
+      }
+
+      // Simple highlight logic
+      function checkAnomalies(temp, heartrate, spo2) {
+        const tempCard = document.getElementById("tempCard");
+        const hrCard = document.getElementById("hrCard");
+        const spo2Card = document.getElementById("spo2Card");
+
+        tempCard.classList.remove("warning");
+        hrCard.classList.remove("warning");
+        spo2Card.classList.remove("warning");
+
+        // mark if out of range
+        if (temp > 37.2 || temp < 36.1) tempCard.classList.add("warning");
+        if (heartrate > 100 || heartrate < 60) hrCard.classList.add("warning");
+        if (spo2 < 90) spo2Card.classList.add("warning");
+      }
+
+      // Dark mode toggle
+      document.getElementById("toggleDarkMode").addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+      });
+
+      // Updates the combined chart
+      function updateCombinedChart() {
+        combinedChart.data.labels = combinedLabels;
+        combinedChart.data.datasets[0].data = temperatureData;
+        combinedChart.data.datasets[1].data = heartrateData;
+        combinedChart.data.datasets[2].data = spo2Data;
+        combinedChart.update();
+      }
+
+      // Calculate session stats
+      function calculateSessionStats() {
+        // Temperature
+        if (temperatureData.length > 0) {
+          const tempMin = Math.min(...temperatureData);
+          const tempMax = Math.max(...temperatureData);
+          const tempAvg = (temperatureData.reduce((a, b) => a + b, 0) / temperatureData.length).toFixed(1);
+
+          document.getElementById('tempMin').textContent = tempMin.toFixed(1);
+          document.getElementById('tempMax').textContent = tempMax.toFixed(1);
+          document.getElementById('tempAvg').textContent = tempAvg;
+        }
+
+        // Heart Rate
+        if (heartrateData.length > 0) {
+          const hrMin = Math.min(...heartrateData);
+          const hrMax = Math.max(...heartrateData);
+          const hrAvg = (heartrateData.reduce((a, b) => a + b, 0) / heartrateData.length).toFixed(1);
+
+          document.getElementById('hrMin').textContent = hrMin.toFixed(1);
+          document.getElementById('hrMax').textContent = hrMax.toFixed(1);
+          document.getElementById('hrAvg').textContent = hrAvg;
+        }
+
+        // SpO2
+        if (spo2Data.length > 0) {
+          const spo2Min = Math.min(...spo2Data);
+          const spo2Max = Math.max(...spo2Data);
+          const spo2Avg = (spo2Data.reduce((a, b) => a + b, 0) / spo2Data.length).toFixed(1);
+
+          document.getElementById('spo2Min').textContent = spo2Min.toFixed(1);
+          document.getElementById('spo2Max').textContent = spo2Max.toFixed(1);
+          document.getElementById('spo2Avg').textContent = spo2Avg;
+        }
+      }
+
+      // Initialize everything on window load
+      window.onload = function () {
+        // Chart contexts
+        const tempCtx = document.getElementById("temperatureChart").getContext("2d");
+        const hrCtx = document.getElementById("heartrateChart").getContext("2d");
+        const spo2Ctx = document.getElementById("spo2Chart").getContext("2d");
+        const combinedCtx = document.getElementById("combinedChart").getContext("2d");
+
+        // Temperature Chart
+        temperatureChart = new Chart(tempCtx, {
+          type: 'line',
+          data: {
+            labels: combinedLabels,
+            datasets: [
+              {
+                label: 'Température (°C)',
+                data: temperatureData,
+                borderColor: '#ffbd69',
+                backgroundColor: 'rgba(255, 189, 105, 0.2)',
+                borderWidth: 2,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Temps',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Température (°C)',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff'
+                }
+              }
+            }
+          }
+        });
+
+        // Heart Rate Chart
+        heartrateChart = new Chart(hrCtx, {
+          type: 'line',
+          data: {
+            labels: combinedLabels,
+            datasets: [
+              {
+                label: 'Fréquence cardiaque (BPM)',
+                data: heartrateData,
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                borderWidth: 2,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Temps',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'BPM',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff'
+                }
+              }
+            }
+          }
+        });
+
+        // SpO2 Chart
+        spo2Chart = new Chart(spo2Ctx, {
+          type: 'line',
+          data: {
+            labels: combinedLabels,
+            datasets: [
+              {
+                label: 'SpO2 (%)',
+                data: spo2Data,
+                borderColor: '#2ecc71',
+                backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                borderWidth: 2,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Temps',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'SpO2 (%)',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff'
+                }
+              }
+            }
+          }
+        });
+
+        // Combined Chart (for comparative view)
+        combinedChart = new Chart(combinedCtx, {
+          type: 'line',
+          data: {
+            labels: combinedLabels,
+            datasets: [
+              {
+                label: 'Température (°C)',
+                data: temperatureData,
+                borderColor: '#ffbd69',
+                backgroundColor: 'rgba(255, 189, 105, 0.2)',
+                borderWidth: 2,
+                fill: false
+              },
+              {
+                label: 'Fréquence cardiaque (BPM)',
+                data: heartrateData,
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                borderWidth: 2,
+                fill: false
+              },
+              {
+                label: 'SpO2 (%)',
+                data: spo2Data,
+                borderColor: '#2ecc71',
+                backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                borderWidth: 2,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Temps',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Valeur',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff'
+                }
+              }
+            }
+          }
+        });
+
+        // Automatic data fetching
+        setInterval(() => {
+          fetchData('/temperature', 'temperature', temperatureChart, temperatureData, 'normalSound', 'anomalySound', 'temperatureValue');
+        }, 3000);
+
+        setInterval(() => {
+          fetchData('/heartrate', 'heartrate', heartrateChart, heartrateData, 'normalSound', 'anomalySound', 'heartrateValue');
+        }, 3000);
+
+        setInterval(() => {
+          fetchData('/spo2', 'spo2', spo2Chart, spo2Data, 'normalSound', 'anomalySound', 'spo2Value');
+        }, 3000);
+
+        // Historical data + anomaly checks
+        setInterval(async () => {
+          const currentTime = new Date().toLocaleTimeString();
+          try {
+            const tempResponse = await fetch('/temperature');
+            const heartrateResponse = await fetch('/heartrate');
+            const spo2Response = await fetch('/spo2');
+
+            const tempValue = await tempResponse.json();
+            const heartrateValue = await heartrateResponse.json();
+            const spo2Value = await spo2Response.json();
+
+            addTableRow(currentTime, tempValue.temperature, heartrateValue.heartrate, spo2Value.spo2);
+            checkAnomalies(tempValue.temperature, heartrateValue.heartrate, spo2Value.spo2);
+            calculateSessionStats();
+          } catch (err) {
+            console.error('Error fetching data for table', err);
+          }
+        }, 3000);
+      };
+    </script>
+  </body>
+</html>
