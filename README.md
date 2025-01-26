@@ -102,4 +102,4 @@ This project is open-source and available under the MIT License.
 For questions or contributions, contact:
 - **Author:** Khadri abderrahim
 - **Supervisor:** Mme Hafssa BENABOUD
-- **Repository:** [GitHub] https://github.com/abde109/IotHeath.git
+- **Repository:** https://github.com/abde109/IotHeath.git
